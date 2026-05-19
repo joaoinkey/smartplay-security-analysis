@@ -52,10 +52,14 @@
   episódio sem usar o app. Isso também confirmou que o conteúdo não possui nenhuma proteção
   de acesso como tokens assinados ou URLs temporárias.
 
+  ![Resposta da API com URL do Backblaze](screenshots/traffic-backblaze-url.jpg)
+
   **"lang": "DUB" hardcoded**
   Um dos endpoints retornou o parâmetro `"lang": "DUB"` fixo no JSON de resposta. Isso
   confirmou que não existe suporte a múltiplos idiomas ou legendas; há uma única faixa de
   áudio disponível por conteúdo, o que respondia à minha motivação inicial para a análise.
+
+  ![Resposta completa da API com lang hardcoded](screenshots/traffic-api-response.jpg)
 
   **Tokens expirados ainda funcionam**
   Foi verificado que tokens de autenticação continuavam funcionando após o prazo de validade
@@ -89,7 +93,9 @@
   - `ap_lovin_key`: chave do SDK de publicidade AppLovin, que identifica a conta do publisher
   e deveria ser protegida.
 
-  Chaves Firebase seguem o padrão `AIzaSy...` e são semi-públicas por design — o impacto real
+  ![Chaves Firebase expostas no strings.xml](screenshots/strings-firebase-key.jpg)
+
+  Chaves Firebase seguem o padrão `AIzaSy...` e são semi-públicas por design. O impacto real
   depende das regras de acesso configuradas no console do Firebase, o que não foi verificado
   nesta análise. A exposição é uma má prática documentável, mas o impacto real não pode ser
   confirmado sem teste ativo.
@@ -101,19 +107,23 @@
   logs, e deveriam ser removidas antes da publicação. A presença dela indica que o processo
   de build não tem uma etapa de revisão antes do release.
 
+  **Tráfego não criptografado permitido**
+  A flag `usesCleartextTraffic="true"` no manifest indica que o app não força HTTPS em todas
+  as conexões, permitindo comunicação HTTP sem criptografia.
+
+  ![DebugActivity e usesCleartextTraffic no manifest](screenshots/manifest-cleartext-debug.jpg)
+
   **Permissões excessivas**
   O manifest declara permissões desproporcionais para um app de streaming:
   - `ACCESS_COARSE_LOCATION`, `ACCESS_FINE_LOCATION` e `ACCESS_BACKGROUND_LOCATION`: não há
   justificativa legítima para um app de streaming coletar localização, especialmente em
-  background — quando o app está fechado.
+  background, quando o app está fechado.
   - `REQUEST_INSTALL_PACKAGES`: permite instalar APKs no dispositivo. Provavelmente usada
   para auto-atualização fora da Play Store, o que é plausível dado que o app não está
   disponível na loja oficial. Ainda assim, é uma permissão de alto risco que poderia ser
   explorada para instalar software malicioso.
-  
-  **Tráfego não criptografado permitido**
-  A flag `usesCleartextTraffic="true"` no manifest indica que o app não força HTTPS em todas
-  as conexões, permitindo comunicação HTTP sem criptografia. Isso expõe potencialmente dados
+
+  ![Permissões excessivas no manifest](screenshots/manifest-permissions.jpg)
   
   ---
   
